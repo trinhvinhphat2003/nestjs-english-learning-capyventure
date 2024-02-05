@@ -1,7 +1,7 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { Content } from "../../story.schema";
+import { IsArray, IsNotEmpty, IsNumber, IsString, isArray } from "class-validator";
+import { Comment, Content } from "../../story.schema";
 
-export class CreateStoryRequestDTO {
+export class UpdateStoryRequestDTO {
     @IsString()
     @IsNotEmpty()
     title: string;
@@ -20,6 +20,12 @@ export class CreateStoryRequestDTO {
     @IsString()
     @IsNotEmpty()
     category: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    views: number;
+
+    comment: Comment[];
 
     @IsString()
     @IsNotEmpty()

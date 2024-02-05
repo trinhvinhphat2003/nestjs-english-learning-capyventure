@@ -14,14 +14,8 @@ export class Account {
     @Prop({ required: true })
     email: string;
 
-    @Prop({ required: true })
-    password: string;
-
     @Prop({ type: String, enum: Role, default: Role.member })
     role: Role;
-
-    @Prop([String])
-    vocab_storage_tags: string[];
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

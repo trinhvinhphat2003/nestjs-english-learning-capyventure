@@ -38,6 +38,9 @@ export class Story {
 
     @Prop({ required: true, default: [] })
     comment: Comment[];
+
+    @Prop({ required: true})
+    level: string;
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

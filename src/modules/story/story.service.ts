@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Story, StoryDocument } from "./story.schema";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
+import { UpdateStoryRequestDTO } from "./dtos/requests/update-story-request.dto";
 
 @Injectable()
 export class StoryService {
@@ -18,7 +19,8 @@ export class StoryService {
             views: 0,
             comment: [],
             contents: dto.contents,
-            display_image: display_image
+            display_image: display_image,
+            level: dto.level
         }
         return new this.storyModel(newStory).save()
     }
@@ -48,5 +50,32 @@ export class StoryService {
                 throw new InternalServerErrorException();
             });
         return story;
+    }
+
+    async updateOneById(id: string, dto: UpdateStoryRequestDTO): Promise<StoryDocument> {
+        let display_image: string = "";
+        let updateInfo: Story = {
+            category: dto.category,
+            title: dto.title,
+            author: dto.author,
+            description: dto.description,
+            views: dto.views,
+            comment: dto.comment,
+            contents: dto.contents,
+            display_image: display_image,
+            level: dto.level
+        }
+        return await this.storyModel.findByIdAndUpdate(id, updateInfo)
+        .then(rs => rs)
+        .catch(err => {
+            throw new InternalServerErrorException();
+        })
+    }
+
+    async deleteOneById(id: string): Promise<void> {
+        await this.storyModel.deleteOne({ _id: id })
+        .catch(err => {
+            throw new InternalServerErrorException();
+        })
     }
 }

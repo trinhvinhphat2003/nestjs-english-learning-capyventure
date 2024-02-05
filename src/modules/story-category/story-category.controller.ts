@@ -36,4 +36,5 @@ export class StoryCategoryController {
             throw new InternalServerErrorException();
         }
     }
+    
 }

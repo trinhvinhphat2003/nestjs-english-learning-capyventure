@@ -7,10 +7,5 @@ export class CreateAccountRequestDTO {
     email: string;
 
     @IsNotEmpty()
-    password: string;
-
-    @IsNotEmpty()
     role: Role;
-
-    vocab_storage_tags: string[];
 }
