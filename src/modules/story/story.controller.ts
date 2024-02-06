@@ -3,6 +3,8 @@ import { ApiTags } from "@nestjs/swagger";
 import { StoryService } from "./story.service";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
 import { UpdateStoryRequestDTO } from "./dtos/requests/update-story-request.dto";
+import logging from "src/configs/logging";
+import { FilterStoryRequestDTO } from "./dtos/requests/filter-story.dto";
 
 @ApiTags('story')
 @Controller('story')
@@ -16,6 +18,11 @@ export class StoryController {
     async createNewStory(@Body() dto: CreateStoryRequestDTO) {
         try {
             let result: any = await this.storyService.createNewStory(dto)
+            .then(rs => rs)
+            .catch(err => {
+                logging.error(JSON.stringify(err));
+                throw new InternalServerErrorException();
+            })
             return {
                 statusCode: 200,
                 data: result
@@ -25,13 +32,14 @@ export class StoryController {
         }
     }
 
-    @Get("/:page/:size")
+    @Post("/:page/:size")
     async GetAllStory(
         @Param("page") page: number,
-        @Param("size") size: number
+        @Param("size") size: number,
+        @Body() filterDTO: FilterStoryRequestDTO
     ) {
         try {
-            let result: any = await this.storyService.getAll(page, size);
+            let result: any = await this.storyService.getAll(page, size, filterDTO);
             return {
                 statusCode: 200,
                 data: result

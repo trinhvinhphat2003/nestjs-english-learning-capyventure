@@ -3,10 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountService } from "../account/account.service";
 import { AuthenticationError } from "./auth.exception";
 import logging from "src/configs/logging";
+import { AccountDocument } from "../account/account.schema";
 
 type decodedToken = {
     accountId: string,
     exp: number,
+    email: string
 }
 
 type authResponse = {
@@ -24,6 +26,24 @@ export class AuthService {
     private async generateToken(payload: any): Promise<string> {
         const token = await this.jwtService.signAsync(payload);
         return token;
+    }
+
+    async verifyToken(token: string): Promise<boolean> {
+        if (!token) {
+            throw new AuthenticationError("Token is required", 400);
+        }
+        const decodedToken = await this.decodeToken(token);
+        if (decodedToken.accountId && decodedToken.exp < Date.now()) {
+            var account: AccountDocument = await this.accountService.getOneWithEmail(decodedToken.email)
+            .then(rs => rs)
+            .catch(er => {
+                throw new InternalServerErrorException()
+            })
+            if (account.email === decodedToken.email && account.id === decodedToken.accountId && account.role === "admin") {
+                return true;
+            }
+        }
+        throw new AuthenticationError("Token is not correct", 400);
     }
 
     private async decodeToken(token: string): Promise<decodedToken> {
@@ -56,7 +76,7 @@ export class AuthService {
         if (!account) {
             throw new AuthenticationError("Email is not correct", 400);
         }
-        let token: string = await this.generateToken({ accountId: account._id })
+        let token: string = await this.generateToken({ accountId: account._id, email: account.email })
         return {
             token: token,
             account,

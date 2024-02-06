@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, InternalServerErrorException, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { StoryCategoryService } from "./story-category.service";
 import { CreateStoryCategoryRequestDTO } from "./dtos/requests/create-category-request.dto";
@@ -34,6 +34,17 @@ export class StoryCategoryController {
             }
         } catch (error) {
             throw new InternalServerErrorException();
+        }
+    }
+
+    @Delete("/:id")
+    async deleteStoryCategoryById(
+        @Param("id") id: string
+    ) {
+        this.storyCategoryService.deleteOneById(id)
+        return {
+            statusCode: 200,
+            message: "delete successfully"
         }
     }
     

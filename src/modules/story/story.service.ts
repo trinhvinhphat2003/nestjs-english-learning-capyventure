@@ -4,13 +4,16 @@ import { Model } from "mongoose";
 import { Story, StoryDocument } from "./story.schema";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
 import { UpdateStoryRequestDTO } from "./dtos/requests/update-story-request.dto";
+import logging from "src/configs/logging";
+import { FilterStoryRequestDTO } from "./dtos/requests/filter-story.dto";
 
 @Injectable()
 export class StoryService {
     constructor(@InjectModel(Story.name) private storyModel: Model<Story>) { }
 
     async createNewStory(dto: CreateStoryRequestDTO): Promise<StoryDocument> {
-        let display_image: string = "";
+        logging.info("////// START CRATE STORY //////", "createNewStory()")
+        let display_image: string = "display_image";
         let newStory: Story = {
             category: dto.category,
             title: dto.title,
@@ -22,6 +25,7 @@ export class StoryService {
             display_image: display_image,
             level: dto.level
         }
+        logging.info("new story: " + JSON.stringify(newStory), "createNewStory()")
         return new this.storyModel(newStory).save()
     }
 
@@ -38,17 +42,27 @@ export class StoryService {
         return story;
     }
 
-    async getAll(page: number, size: number): Promise<StoryDocument[]> {
+    async getAll(page: number, size: number, filterDTO: FilterStoryRequestDTO): Promise<StoryDocument[]> {
+        logging.info("////// START GET STORY //////", "story/getAll()")
+        logging.info("filter DTO: " + JSON.stringify(filterDTO), "story/getAll()")
         let offset = (page - 1) * size;
         let limit = size;
-        let story: StoryDocument[] = await this.storyModel.find()
+        let story: StoryDocument[] = await this.storyModel.find({
+            title: {$regex: new RegExp(filterDTO.title, "i")},
+            level: {$regex: new RegExp(filterDTO.level, "i")},
+            category: {$regex: new RegExp(filterDTO.category, "i")},
+        })
+        .sort({
+            "_id": filterDTO.sort.direction === "asc" ? 1 : -1
+        })
             .skip(offset)
             .limit(limit)
             .exec()
             .then(result => result)
             .catch(error => {
                 throw new InternalServerErrorException();
-            });
+            }); 
+        logging.info(JSON.stringify(story))
         return story;
     }
 

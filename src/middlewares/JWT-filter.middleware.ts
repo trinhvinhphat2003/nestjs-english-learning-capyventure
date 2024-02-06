@@ -23,16 +23,20 @@ export class JWTFilter implements NestMiddleware {
         logging.info(originalUrl)
         logging.info(method)
 
-        //let isPublicRoute: boolean = this.allowPublicRoute(req, next, originalUrl, method);
-        //if(isPublicRoute) next()
+        let isPublicRoute: boolean = this.allowPublicRoute(req, next, originalUrl, method);
+        if(isPublicRoute) {
+            logging.info("isPublic")
+            next()
+            return;
+        }
 
-        logging.info(originalUrl)
-        logging.info(method)
-
-        // let token = req.headers.authorization;
-        // if(!token) {
-        //     throw new UnauthorizedException();
-        // }
-        next()
+        let token = req.headers.authorization;
+        if(!token) {
+            throw new UnauthorizedException();
+        } else {
+            next()
+            return;
+        }
+        
     }
 }

@@ -38,4 +38,11 @@ export class StoryCategoryService {
             });
         return category;
     }
+
+    async deleteOneById(id: string): Promise<void> {
+        await this.srotyCategoryModel.deleteOne({ _id: id })
+        .catch(err => {
+            throw new InternalServerErrorException();
+        })
+    }
 }
