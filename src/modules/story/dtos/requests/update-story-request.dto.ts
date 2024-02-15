@@ -27,6 +27,8 @@ export class UpdateStoryRequestDTO {
 
     comment: Comment[];
 
+    display_image: string;
+
     @IsString()
     @IsNotEmpty()
     level: string;

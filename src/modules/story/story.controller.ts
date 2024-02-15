@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Put, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Put, Query, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { StoryService } from "./story.service";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
@@ -10,7 +10,7 @@ import {
     FileFieldsInterceptor,
     MemoryStorageFile,
     UploadedFiles,
-  } from '@blazity/nest-file-fastify';
+} from '@blazity/nest-file-fastify';
 import { Response } from "express";
 import { readFileSync } from "fs";
 
@@ -25,24 +25,24 @@ export class StoryController {
     @Post()
     @UseInterceptors(
         FileFieldsInterceptor([
-          { name: 'image', maxCount: 1 }
+            { name: 'image', maxCount: 1 }
         ])
-      )
+    )
     async createNewStory(
         @Body() data: Record<string, unknown>,   // other data that you might want to pass along with the files
-    @UploadedFiles()
-    files: { image?: MemoryStorageFile }
+        @UploadedFiles()
+        files: { image?: MemoryStorageFile }
         //@Body() dto: CreateStoryRequestDTO
     ) {
         try {
             let body: CreateStoryRequestDTO = data.data as unknown as CreateStoryRequestDTO;
             console.log(JSON.stringify(body))
             let result: any = await this.storyService.createNewStory(body, files.image)
-            .then(rs => rs)
-            .catch(err => {
-                logging.error(JSON.stringify(err));
-                throw new InternalServerErrorException();
-            })
+                .then(rs => rs)
+                .catch(err => {
+                    logging.error(JSON.stringify(err));
+                    throw new InternalServerErrorException();
+                })
             return {
                 statusCode: 200,
                 data: result
@@ -54,18 +54,18 @@ export class StoryController {
     }
 
     @Get('/display-image/:id')
-  async getImage(@Param('id') id: string, @Res() res: Response): Promise<any> {
-    const image = await this.storyService.findImageById(id);
-    //console.log(JSON.stringify(image))
+    async getImage(@Param('id') id: string, @Res() res: Response): Promise<any> {
+        const image = await this.storyService.findImageById(id);
+        //console.log(JSON.stringify(image))
 
-    if (!image) {
-      return res.status(404).send('Image not found');
+        if (!image) {
+            return res.status(404).send('Image not found');
+        }
+
+
+        res.header('Content-Type', image.contentType);
+        res.send(image.data);
     }
-    
-
-    res.header('Content-Type', image.contentType);
-    res.send(image.data);
-  }
 
     @Post("/:page/:size")
     async GetAllStory(
@@ -100,12 +100,23 @@ export class StoryController {
     }
 
     @Put("/:id")
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'image', maxCount: 1 }
+        ])
+    )
     async updateStoryById(
         @Param("id") id: string,
-        @Body() dto: UpdateStoryRequestDTO
+        @Query("isImageChange") isImageChange: string,
+        @Body() data: Record<string, unknown>,  
+        @UploadedFiles()
+        files: { image?: MemoryStorageFile }
     ) {
+        console.log(isImageChange)
         try {
-            let result: any = await this.storyService.updateOneById(id, dto);
+            
+            let body: UpdateStoryRequestDTO = data.data as unknown as UpdateStoryRequestDTO;
+            let result: any = await this.storyService.updateOneById(id, body, files.image, isImageChange === "yes" ? true : false);
             return {
                 statusCode: 200,
                 data: result
