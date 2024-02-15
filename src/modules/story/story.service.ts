@@ -153,4 +153,11 @@ export class StoryService {
                 throw new InternalServerErrorException();
             })
     }
+
+    async getStoryByCate(categoryName: string): Promise<StoryDocument[]> {
+        return this.storyModel.find({
+            category: { $regex: new RegExp(categoryName, "i") },
+        })
+            .exec()
+    }
 }

@@ -41,10 +41,14 @@ export class StoryCategoryController {
     async deleteStoryCategoryById(
         @Param("id") id: string
     ) {
-        this.storyCategoryService.deleteOneById(id)
+        let message: string = await this.storyCategoryService.deleteOneById(id)
+        .then(rs => rs)
+        .catch(err => {
+            throw new InternalServerErrorException();
+        })
         return {
             statusCode: 200,
-            message: "delete successfully"
+            message: message
         }
     }
     

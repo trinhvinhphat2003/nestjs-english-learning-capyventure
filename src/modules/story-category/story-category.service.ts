@@ -1,13 +1,16 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import * as bcrypt from 'bcrypt';
 import { StoryCategory, StoryCategoryDocument } from "./story-category.schema";
 import { CreateStoryCategoryRequestDTO } from "./dtos/requests/create-category-request.dto";
+import { Story, StoryDocument } from "../story/story.schema";
+import { StoryService } from "../story/story.service";
 
 @Injectable()
 export class StoryCategoryService {
-    constructor(@InjectModel(StoryCategory.name) private srotyCategoryModel: Model<StoryCategory>) { }
+    constructor(@InjectModel(StoryCategory.name) private srotyCategoryModel: Model<StoryCategory>,
+    @Inject('STORY_SERVICE_PHATTV') private readonly storyService: StoryService) { }
 
     async createNewCategory(dto: CreateStoryCategoryRequestDTO): Promise<StoryCategoryDocument> {
         let newCategory: StoryCategory = {
@@ -39,10 +42,27 @@ export class StoryCategoryService {
         return category;
     }
 
-    async deleteOneById(id: string): Promise<void> {
-        await this.srotyCategoryModel.deleteOne({ _id: id })
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+    async deleteOneById(id: string): Promise<string> {
+
+        let category: StoryCategoryDocument = await this.getOneById(id)
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
+
+        let story: StoryDocument[] = await this.storyService.getStoryByCate(category.category_name)
+            .then(result => result)
+            .catch(error => {
+                throw new InternalServerErrorException();
+            });
+        if (story.length > 0) {
+            await this.srotyCategoryModel.deleteOne({ _id: id })
+                .catch(err => {
+                    throw new InternalServerErrorException();
+                })
+            return "delete successfully";
+        } else {
+            return "Can not delete because there are stories belonging to this category"
+        }
     }
 }
