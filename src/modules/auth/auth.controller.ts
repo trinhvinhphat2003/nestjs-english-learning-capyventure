@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Inject, Post, Res } from "@nestjs/common";
+import { Body, Controller, Headers, HttpCode, HttpStatus, Inject, Param, Post, Res } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import logging from "src/configs/logging";
@@ -34,6 +34,19 @@ export class AuthController {
         try {
             logging.info("Start verify email and password", "auth/controller/loginPassword()")
             return await this.authService.verifyPassword(body.email, body.password);
+        } catch (error) {
+            return JSON.stringify(error);
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('login/google/:token')
+    async loginGoogle(
+        @Param("token") token: string
+    ) {
+        try {
+            logging.info("Start verify google", "auth/controller/loginPassword()")
+            return await this.authService.verifyGoogleToken(token);
         } catch (error) {
             return JSON.stringify(error);
         }

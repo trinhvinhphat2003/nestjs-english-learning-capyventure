@@ -4,6 +4,7 @@ import { AccountService } from "../account/account.service";
 import { AuthenticationError } from "./auth.exception";
 import logging from "src/configs/logging";
 import { AccountDocument } from "../account/account.schema";
+import axios from 'axios';
 
 type decodedToken = {
     accountId: string,
@@ -35,10 +36,10 @@ export class AuthService {
         const decodedToken = await this.decodeToken(token);
         if (decodedToken.accountId && decodedToken.exp < Date.now()) {
             var account: AccountDocument = await this.accountService.getOneWithEmail(decodedToken.email)
-            .then(rs => rs)
-            .catch(er => {
-                throw new InternalServerErrorException()
-            })
+                .then(rs => rs)
+                .catch(er => {
+                    throw new InternalServerErrorException()
+                })
             if (account.email === decodedToken.email && account.id === decodedToken.accountId && account.role === "admin") {
                 return true;
             }
@@ -48,10 +49,10 @@ export class AuthService {
 
     private async decodeToken(token: string): Promise<decodedToken> {
         const decodedToken: decodedToken = await this.jwtService.verifyAsync(token)
-        .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
         return decodedToken;
     }
 
@@ -59,12 +60,12 @@ export class AuthService {
         if (!token) {
             throw new AuthenticationError("Token is required", 400);
         }
-    
+
         const decodedToken: decodedToken = await this.decodeToken(token)
-        .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
         logging.info("decodedToken: " + JSON.stringify(decodedToken))
         return decodedToken.accountId;
     }
@@ -79,6 +80,36 @@ export class AuthService {
         let token: string = await this.generateToken({ accountId: account._id, email: account.email })
         return {
             token: token,
+            account,
+        };
+
+    }
+
+    async verifyGoogleToken(googleToken: string): Promise<authResponse> {
+        logging.info("Start get one with email", "auth/service/verifyPassword()")
+        let url: string = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + googleToken;
+
+        let googleResponse: any = axios.get(url)
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+
+        var account = await this.accountService.getOneWithEmail(googleResponse.email);
+        if(!account) {
+            //create account
+        }
+        logging.info(JSON.stringify(account), "auth/service/verifyGoogleToken()")
+        if (!account) {
+            throw new AuthenticationError("Email is not correct", 400);
+        }
+        let jwt: string = await this.generateToken({ accountId: account._id, email: account.email })
+        return {
+            token: jwt,
             account,
         };
 
