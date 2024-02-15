@@ -34,6 +34,7 @@ export class JWTFilter implements NestMiddleware {
         if(!token) {
             throw new UnauthorizedException();
         } else {
+            logging.info("isPrivate")
             next()
             return;
         }

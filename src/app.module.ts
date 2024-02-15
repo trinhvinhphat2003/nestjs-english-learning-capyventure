@@ -18,7 +18,7 @@ import { MyMiddlewareModule } from './middlewares/middleware.module';
     StoryModule,
     VocabularyModule,
     VocabularyTagModule,
-    MyMiddlewareModule
+    //MyMiddlewareModule
   ],
   controllers: [],
   providers: [],
