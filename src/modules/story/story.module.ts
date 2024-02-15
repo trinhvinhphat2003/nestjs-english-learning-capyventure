@@ -3,9 +3,11 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { StoryService } from "./story.service";
 import { StoryController } from "./story.controller";
 import { Story, StorySchema } from "./story.schema";
+import { Image, ImageSchema } from "./image.schema";
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: Story.name, schema: StorySchema }])
+        MongooseModule.forFeature([{ name: Story.name, schema: StorySchema }]),
+        MongooseModule.forFeature([{ name: Image.name, schema: ImageSchema }])
     ],
     controllers: [
         StoryController,

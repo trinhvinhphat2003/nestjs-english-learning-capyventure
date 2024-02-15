@@ -6,14 +6,35 @@ import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto"
 import { UpdateStoryRequestDTO } from "./dtos/requests/update-story-request.dto";
 import logging from "src/configs/logging";
 import { FilterStoryRequestDTO } from "./dtos/requests/filter-story.dto";
+import { Image, imageDocument } from "./image.schema";
+import { MemoryStorageFile } from "@blazity/nest-file-fastify";
 
 @Injectable()
 export class StoryService {
-    constructor(@InjectModel(Story.name) private storyModel: Model<Story>) { }
+    constructor(@InjectModel(Story.name) private storyModel: Model<Story>,
+    @InjectModel(Image.name) private imageModel: Model<Image>
+    ) { }
 
-    async createNewStory(dto: CreateStoryRequestDTO): Promise<StoryDocument> {
+    async findImageById(id: string): Promise<Image> {
+        return this.imageModel.findById(id).exec();
+      }
+
+    async createNewStory(dto: CreateStoryRequestDTO, image: MemoryStorageFile): Promise<StoryDocument> {
+        //console.log(JSON.stringify(image[0]))
         logging.info("////// START CRATE STORY //////", "createNewStory()")
-        let display_image: string = "display_image";
+        const createdImage = new this.imageModel({
+            data: image[0].buffer,
+            contentType: image[0].mimetype
+        })
+        const createdImageRs: any = await createdImage.save()
+        .then(rs => {
+            //console.log(JSON.stringify(rs))
+            return rs;
+        })
+        .catch(err => {
+            logging.error(err, "createNewStory()")
+        })
+        let display_image: string = "localhost:4000/story/display-image/" + createdImageRs.id;
         let newStory: Story = {
             category: dto.category,
             title: dto.title,
