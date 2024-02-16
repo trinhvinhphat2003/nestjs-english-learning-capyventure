@@ -140,14 +140,14 @@ export class StoryService {
 
     async deleteOneById(id: string): Promise<void> {
         let story: any = await this.getOneById(id)
-        .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
         let split: string[] = story.display_image.split("/")
-            let oldImageId: string = split[split.length - 1];
-            console.log(oldImageId)
-            await this.deleteImageById(oldImageId)
+        let oldImageId: string = split[split.length - 1];
+        console.log(oldImageId)
+        await this.deleteImageById(oldImageId)
         await this.storyModel.deleteOne({ _id: id })
             .catch(err => {
                 throw new InternalServerErrorException();
@@ -159,5 +159,20 @@ export class StoryService {
             category: { $regex: new RegExp(categoryName, "i") },
         })
             .exec()
+    }
+
+    async deleteByCate(cateName: string): Promise<void> {
+        let storyies: StoryDocument[] = await this.getStoryByCate(cateName)
+
+        for (const story of storyies) {
+            let split: string[] = story.display_image.split("/")
+            let oldImageId: string = split[split.length - 1];
+            console.log(oldImageId)
+            await this.deleteImageById(oldImageId)
+            await this.storyModel.deleteOne({ _id: story.id })
+                .catch(err => {
+                    throw new InternalServerErrorException();
+                })
+        }
     }
 }

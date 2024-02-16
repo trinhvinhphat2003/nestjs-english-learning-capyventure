@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Pa
 import { ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { VocabularyTagService } from "./vocabulary-tag.service";
+import { CreateVocabularyTagRequestDTO } from "./dtos/requests/CreateVocabularyTagRequestDTO";
 
 @ApiTags('vocabulary-tag')
 @Controller('vocabulary-tag')
@@ -11,33 +12,18 @@ export class VocabularyTagController {
         @Inject('VOCABULARY_TAG_SERVICE_PHATTV') private readonly vocabularyTagService: VocabularyTagService,
     ) { }
 
-    // @Post()
-    // async createNewStory(@Body() dto: CreateVocabularyRequestDTO, @Req() request: Request) {
-    //     try {
-    //         let result: any = await this.vocabularyService.createNewVocabulary(dto, request)
-    //         return {
-    //             statusCode: 200,
-    //             data: result
-    //         }
-    //     } catch (error) {
-    //         throw new InternalServerErrorException();
-    //     }
-    // }
-
-    // @Get("/:id")
-    // async GetVocabById(
-    //     @Param("id") id: string
-    // ) {
-    //     try {
-    //         let result: any = await this.vocabularyService.getOneById(id);
-    //         return {
-    //             statusCode: 200,
-    //             data: result
-    //         }
-    //     } catch (error) {
-    //         throw new InternalServerErrorException();
-    //     }
-    // }
+    @Post()
+    async createNewVocabularyTag(@Body() dto: CreateVocabularyTagRequestDTO, @Req() request: Request) {
+        try {
+            await this.vocabularyTagService.createNewVocabularyTag(dto, request)
+            return {
+                statusCode: 200,
+                message: "Tag created successfully"
+            }
+        } catch (error) {
+            throw new InternalServerErrorException();
+        }
+    }
 
     // @Get("/tag/:tag/:page/:size")
     // async GetVocabByTag(
@@ -56,27 +42,28 @@ export class VocabularyTagController {
     //     }
     // }
 
-    // @Get("/:page/:size")
-    // async GetAllVocab(
-    //     @Param("page") page: number,
-    //     @Param("size") size: number
-    // ) {
-    //     try {
-    //         let result: any = await this.vocabularyService.getAll(page, size);
-    //         return {
-    //             statusCode: 200,
-    //             data: result
-    //         }
-    //     } catch (error) {
-    //         throw new InternalServerErrorException();
-    //     }
-    // }
+    @Get()
+    async GetAllVocabTag(@Req() request: Request) {
+        try {
+            let result: any = await this.vocabularyTagService.getAll(request);
+            return {
+                statusCode: 200,
+                data: result
+            }
+        } catch (error) {
+            throw new InternalServerErrorException();
+        }
+    }
 
     @Delete("/:id")
     async deleteVocabTagById(
-        @Param("id") id: string
+        @Param("id") id: string,
+        @Req() request: Request
     ) {
-        //this.vocabularyTagService.deleteOneById(id)
+        await this.vocabularyTagService.deleteOneById(id, request)
+        .catch(err => {
+            throw new InternalServerErrorException()
+        })
         return {
             statusCode: 200,
             message: "delete successfully"

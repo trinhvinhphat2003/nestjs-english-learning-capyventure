@@ -1,4 +1,4 @@
-import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Vocabulary, VocabularyDocument } from "./vocabulary.schema";
@@ -100,6 +100,27 @@ export class VocabularyService {
         return story;
     }
 
+    async getByTagNotPaging(tag: string, request: Request): Promise<VocabularyDocument[]> {
+        let accountId: string = await this.getAccountIdFromrequest(request)
+        .then(rs => rs)
+        .catch(err => {
+            throw new InternalServerErrorException()
+        });
+        let story: VocabularyDocument[] = await this.vocabularyModel.find({
+            tag: tag,
+            accountId: accountId
+        })
+            .exec()
+            .then(result => result)
+            .catch(error => {
+                throw new InternalServerErrorException();
+            });
+        if (!story) {
+            throw new NotFoundException("No vocabulary macth with this id");
+        }
+        return story;
+    }
+
     async getAll(page: number, size: number, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
         .then(rs => rs)
@@ -121,8 +142,36 @@ export class VocabularyService {
         return story;
     }
 
-    async deleteOneById(id: string): Promise<void> {
+    async deleteOneById(id: string, request: Request): Promise<void> {
+        logging.info("////// START DELETE VOCAB //////")
+        
+        let accountId: string = await this.getAccountIdFromrequest(request)
+
+        let vocab: VocabularyDocument = await this.vocabularyModel.findById(id)
+            .exec()
+            .then(result => result)
+            .catch(error => {
+                throw new InternalServerErrorException();
+            });
+        if (!vocab) {
+            throw new NotFoundException("No vocabulary macth with this id");
+        }
+
+        if(vocab.accountId !== accountId) {
+            throw new ForbiddenException();
+        }
+
         await this.vocabularyModel.deleteOne({ _id: id })
+        .catch(err => {
+            throw new InternalServerErrorException();
+        })
+    }
+
+    async deleteAllVocabWithTag(tag: string, accountId: string) {
+        await this.vocabularyModel.deleteMany({
+            tag: tag,
+            accountId: accountId
+        })
         .catch(err => {
             throw new InternalServerErrorException();
         })

@@ -6,11 +6,12 @@ import { StoryCategory, StoryCategoryDocument } from "./story-category.schema";
 import { CreateStoryCategoryRequestDTO } from "./dtos/requests/create-category-request.dto";
 import { Story, StoryDocument } from "../story/story.schema";
 import { StoryService } from "../story/story.service";
+import logging from "src/configs/logging";
 
 @Injectable()
 export class StoryCategoryService {
     constructor(@InjectModel(StoryCategory.name) private srotyCategoryModel: Model<StoryCategory>,
-    @Inject('STORY_SERVICE_PHATTV') private readonly storyService: StoryService) { }
+        @Inject('STORY_SERVICE_PHATTV') private readonly storyService: StoryService) { }
 
     async createNewCategory(dto: CreateStoryCategoryRequestDTO): Promise<StoryCategoryDocument> {
         let newCategory: StoryCategory = {
@@ -44,25 +45,31 @@ export class StoryCategoryService {
 
     async deleteOneById(id: string): Promise<string> {
 
+        logging.info("////// start delete one cate by id //////", "deleteOneById")
+
         let category: StoryCategoryDocument = await this.getOneById(id)
             .then(rs => rs)
             .catch(err => {
                 throw new InternalServerErrorException();
             })
+        logging.info("category: " + JSON.stringify(category), "deleteOneById")
 
         let story: StoryDocument[] = await this.storyService.getStoryByCate(category.category_name)
             .then(result => result)
             .catch(error => {
                 throw new InternalServerErrorException();
             });
+        logging.info("stories: " + JSON.stringify(story), "deleteOneById")
         if (story.length > 0) {
-            await this.srotyCategoryModel.deleteOne({ _id: id })
-                .catch(err => {
-                    throw new InternalServerErrorException();
-                })
-            return "delete successfully";
-        } else {
-            return "Can not delete because there are stories belonging to this category"
+            logging.info("start delete all story belonging to cate", "deleteOneById")
+            this.storyService.deleteByCate(category.category_name)
         }
+        logging.info("start delete cate", "deleteOneById")
+        await this.srotyCategoryModel.deleteOne({ _id: id })
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
+            logging.info("////// end delete one cate by id //////", "deleteOneById")
+        return "delete successfully";
     }
 }

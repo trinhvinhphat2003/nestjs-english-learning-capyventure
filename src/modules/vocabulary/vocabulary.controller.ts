@@ -77,9 +77,10 @@ export class VocabularyController {
 
     @Delete("/:id")
     async deleteVocabById(
-        @Param("id") id: string
+        @Param("id") id: string,
+        @Req() request: Request
     ) {
-        this.vocabularyService.deleteOneById(id)
+        this.vocabularyService.deleteOneById(id, request)
         return {
             statusCode: 200,
             message: "delete successfully"
