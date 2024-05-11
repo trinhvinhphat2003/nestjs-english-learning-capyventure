@@ -29,13 +29,13 @@ export class StoryController {
     //     ])
     // )
     async createNewStory(
-        @Body() data: Record<string, unknown>,   // other data that you might want to pass along with the files
-        @UploadedFiles()
-        files: { image?: MemoryStorageFile }
-        //@Body() dto: CreateStoryRequestDTO
+        // @Body() data: Record<string, unknown>,   // other data that you might want to pass along with the files
+        // @UploadedFiles()
+        // files: { image?: MemoryStorageFile }
+        @Body() dto: CreateStoryRequestDTO
     ) {
         try {
-            let body: CreateStoryRequestDTO = data.data as unknown as CreateStoryRequestDTO;
+            let body: CreateStoryRequestDTO = dto
             console.log(JSON.stringify(body))
             let result: any = await this.storyService.createNewStory(body)
                 .then(rs => rs)
