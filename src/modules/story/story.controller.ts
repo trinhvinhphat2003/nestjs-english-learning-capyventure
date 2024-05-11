@@ -23,11 +23,11 @@ export class StoryController {
     ) { }
 
     @Post()
-    @UseInterceptors(
-        FileFieldsInterceptor([
-            { name: 'image', maxCount: 1 }
-        ])
-    )
+    // @UseInterceptors(
+    //     FileFieldsInterceptor([
+    //         { name: 'image', maxCount: 1 }
+    //     ])
+    // )
     async createNewStory(
         @Body() data: Record<string, unknown>,   // other data that you might want to pass along with the files
         @UploadedFiles()
@@ -53,27 +53,40 @@ export class StoryController {
         }
     }
 
-    @Get('/display-image/:id')
-    async getImage(@Param('id') id: string, @Res() res: Response): Promise<any> {
-        const image = await this.storyService.findImageById(id);
-        //console.log(JSON.stringify(image))
+    // @Get('/display-image/:id')
+    // async getImage(@Param('id') id: string, @Res() res: Response): Promise<any> {
+    //     const image = await this.storyService.findImageById(id);
+    //     //console.log(JSON.stringify(image))
 
-        if (!image) {
-            return res.status(404).send('Image not found');
-        }
+    //     if (!image) {
+    //         return res.status(404).send('Image not found');
+    //     }
 
 
-        res.header('Content-Type', image.contentType);
-        res.send(image.data);
-    }
+    //     res.header('Content-Type', image.contentType);
+    //     res.send(image.data);
+    // }
 
-    @Post("/:page/:size")
+    @Get("/")
     async GetAllStory(
-        @Param("page") page: number,
-        @Param("size") size: number,
-        @Body() filterDTO: FilterStoryRequestDTO
+        @Query("page") page: number = 1,
+        @Query("size") size: number = 10,
+        @Query("title") title: string = '',
+        @Query("category") category: string = "",
+        @Query("level") level: string = "",
+        @Query("sortBy") sortBy : string = "_id",
+        @Query("direction") direction: "asc" | "desc" = "asc" 
     ) {
         try {
+            let filterDTO: FilterStoryRequestDTO = {
+                title,
+                category,
+                level,
+                sort: {
+                    by: sortBy,
+                    direction: direction
+                }
+            }
             let result: any = await this.storyService.getAll(page, size, filterDTO);
             return {
                 statusCode: 200,
@@ -99,32 +112,32 @@ export class StoryController {
         }
     }
 
-    @Put("/:id")
-    @UseInterceptors(
-        FileFieldsInterceptor([
-            { name: 'image', maxCount: 1 }
-        ])
-    )
-    async updateStoryById(
-        @Param("id") id: string,
-        @Query("isImageChange") isImageChange: string,
-        @Body() data: Record<string, unknown>,  
-        @UploadedFiles()
-        files: { image?: MemoryStorageFile }
-    ) {
-        console.log(isImageChange)
-        try {
+    // @Put("/:id")
+    // @UseInterceptors(
+    //     FileFieldsInterceptor([
+    //         { name: 'image', maxCount: 1 }
+    //     ])
+    // )
+    // async updateStoryById(
+    //     @Param("id") id: string,
+    //     @Query("isImageChange") isImageChange: string,
+    //     @Body() data: Record<string, unknown>,  
+    //     @UploadedFiles()
+    //     files: { image?: MemoryStorageFile }
+    // ) {
+    //     console.log(isImageChange)
+    //     try {
             
-            let body: UpdateStoryRequestDTO = data.data as unknown as UpdateStoryRequestDTO;
-            let result: any = await this.storyService.updateOneById(id, body, files.image, isImageChange === "yes" ? true : false);
-            return {
-                statusCode: 200,
-                data: result
-            }
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
-    }
+    //         let body: UpdateStoryRequestDTO = data.data as unknown as UpdateStoryRequestDTO;
+    //         let result: any = await this.storyService.updateOneById(id, body, files.image, isImageChange === "yes" ? true : false);
+    //         return {
+    //             statusCode: 200,
+    //             data: result
+    //         }
+    //     } catch (error) {
+    //         throw new InternalServerErrorException();
+    //     }
+    // }
 
     @Delete("/:id")
     async deleteStoryById(
