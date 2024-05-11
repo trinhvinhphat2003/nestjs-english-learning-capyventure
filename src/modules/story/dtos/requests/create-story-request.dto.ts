@@ -24,4 +24,8 @@ export class CreateStoryRequestDTO {
     @IsString()
     @IsNotEmpty()
     level: string;
+
+    @IsString()
+    @IsNotEmpty()
+    display_image: string;
 }

@@ -8,6 +8,7 @@ import { StoryModule } from './modules/story/story.module';
 import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
 import { VocabularyTagModule } from './modules/vocabulary-tag/vocabulary-tag.module';
 import { MyMiddlewareModule } from './middlewares/middleware.module';
+import { VideoModule } from './modules/video/video.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MyMiddlewareModule } from './middlewares/middleware.module';
     StoryModule,
     VocabularyModule,
     VocabularyTagModule,
+    VideoModule
     //MyMiddlewareModule
   ],
   controllers: [],

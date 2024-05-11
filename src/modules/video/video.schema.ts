@@ -36,7 +36,7 @@ export class Video {
     fullText: string;
 
     @Prop({ required: true})
-    transcripts: Transcript[]
+    transcripts: string
 }
 
 export const VideoSchema = SchemaFactory.createForClass(Video);

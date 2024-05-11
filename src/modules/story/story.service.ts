@@ -35,14 +35,9 @@ export class StoryService {
         return "localhost:4000/story/display-image/" + createdImageRs.id;
     }
 
-    async createNewStory(dto: CreateStoryRequestDTO, image: MemoryStorageFile): Promise<StoryDocument> {
+    async createNewStory(dto: CreateStoryRequestDTO): Promise<StoryDocument> {
         //console.log(JSON.stringify(image[0]))
         logging.info("////// START CRATE STORY //////", "createNewStory()")
-        let display_image: string = await this.insertImage(image)
-            .then(rs => rs)
-            .catch(err => {
-                throw new InternalServerErrorException();
-            })
         let newStory: Story = {
             category: dto.category,
             title: dto.title,
@@ -51,7 +46,7 @@ export class StoryService {
             views: 0,
             comment: [],
             contents: dto.contents,
-            display_image: display_image,
+            display_image: dto.display_image,
             level: dto.level
         }
         logging.info("new story: " + JSON.stringify(newStory), "createNewStory()")

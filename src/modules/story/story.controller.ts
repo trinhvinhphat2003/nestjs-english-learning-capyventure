@@ -37,7 +37,7 @@ export class StoryController {
         try {
             let body: CreateStoryRequestDTO = data.data as unknown as CreateStoryRequestDTO;
             console.log(JSON.stringify(body))
-            let result: any = await this.storyService.createNewStory(body, files.image)
+            let result: any = await this.storyService.createNewStory(body)
                 .then(rs => rs)
                 .catch(err => {
                     logging.error(JSON.stringify(err));
