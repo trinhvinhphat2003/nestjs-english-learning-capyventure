@@ -45,18 +45,18 @@ export class VideoService {
         return new this.VideoModel(newVideo).save()
     }
 
-    // async getOneById(id: string): Promise<VideoDocument> {
-    //     let vocab: VideoDocument = await this.VideoModel.findById(id)
-    //         .exec()
-    //         .then(result => result)
-    //         .catch(error => {
-    //             throw new InternalServerErrorException();
-    //         });
-    //     if (!vocab) {
-    //         throw new NotFoundException("No Video macth with this id");
-    //     }
-    //     return vocab;
-    // }
+    async getOneById(id: string): Promise<VideoDocument> {
+        let vocab: VideoDocument = await this.VideoModel.findById(id)
+            .exec()
+            .then(result => result)
+            .catch(error => {
+                throw new InternalServerErrorException();
+            });
+        if (!vocab) {
+            throw new NotFoundException("No Video macth with this id");
+        }
+        return vocab;
+    }
 
     // async getByTag(tag: string, page: number, size: number, request: Request): Promise<VideoDocument[]> {
     //     let accountId: string = await this.getAccountIdFromrequest(request)

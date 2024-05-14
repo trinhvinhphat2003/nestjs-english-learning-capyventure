@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AccountService } from "../account/account.service";
 import { AuthenticationError } from "./auth.exception";
 import logging from "src/configs/logging";
-import { AccountDocument } from "../account/account.schema";
+import { AccountDocument, Role } from "../account/account.schema";
 import axios from 'axios';
 
 type decodedToken = {
@@ -102,11 +102,15 @@ export class AuthService {
         var account = await this.accountService.getOneWithEmail(googleResponse.email);
         if(!account) {
             //create account
+            account = await this.accountService.createNewAccount({
+                email: googleResponse.email,
+                role: Role.member
+            })
         }
         logging.info(JSON.stringify(account), "auth/service/verifyGoogleToken()")
-        if (!account) {
-            throw new AuthenticationError("Email is not correct", 400);
-        }
+        // if (!account) {
+        //     throw new AuthenticationError("Email is not correct", 400);
+        // }
         let jwt: string = await this.generateToken({ accountId: account._id, email: account.email })
         return {
             token: jwt,

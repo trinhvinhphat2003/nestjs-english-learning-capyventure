@@ -25,20 +25,20 @@ export class VideoController {
         }
     }
 
-    // @Get("/:id")
-    // async GetVocabById(
-    //     @Param("id") id: string
-    // ) {
-    //     try {
-    //         let result: any = await this.VideoService.getOneById(id);
-    //         return {
-    //             statusCode: 200,
-    //             data: result
-    //         }
-    //     } catch (error) {
-    //         throw new InternalServerErrorException();
-    //     }
-    // }
+    @Get("/:id")
+    async GetVideoById(
+        @Param("id") id: string
+    ) {
+        try {
+            let result: any = await this.VideoService.getOneById(id);
+            return {
+                statusCode: 200,
+                data: result
+            }
+        } catch (error) {
+            throw new InternalServerErrorException();
+        }
+    }
 
     // @Get("/tag/:tag/:page/:size")
     // async GetVocabByTag(
