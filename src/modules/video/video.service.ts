@@ -6,6 +6,8 @@ import logging from "src/configs/logging";
 import { CreateVideoRequestDTO } from "./dtos/requests/create-video-request.dto";
 import { Request } from "express";
 import { AuthService } from "../auth/auth.service";
+import { FilterStoryRequestDTO } from "../story/dtos/requests/filter-story.dto";
+import { FilterVideoRequestDTO } from "./dtos/requests/filter-video.dto";
 
 @Injectable()
 export class VideoService {
@@ -56,6 +58,30 @@ export class VideoService {
             throw new NotFoundException("No Video macth with this id");
         }
         return vocab;
+    }
+
+    async getAll(page: number, size: number, filterDTO: FilterVideoRequestDTO): Promise<VideoDocument[]> {
+        logging.info("////// START GET VIDEO //////", "video/getAll()")
+        logging.info("filter DTO: " + JSON.stringify(filterDTO), "story/getAll()")
+        let offset = (page - 1) * size;
+        let limit = size;
+        let video: VideoDocument[] = await this.VideoModel.find({
+            caption: { $regex: new RegExp(filterDTO.caption, "i") },
+            level: { $regex: new RegExp(filterDTO.level, "i") },
+            category: { $regex: new RegExp(filterDTO.category, "i") },
+        })
+            .sort({
+                "_id": filterDTO.sort.direction === "asc" ? 1 : -1
+            })
+            .skip(offset)
+            .limit(limit)
+            .exec()
+            .then(result => result)
+            .catch(error => {
+                throw new InternalServerErrorException();
+            });
+        logging.info(JSON.stringify(video))
+        return video;
     }
 
     // async getByTag(tag: string, page: number, size: number, request: Request): Promise<VideoDocument[]> {
