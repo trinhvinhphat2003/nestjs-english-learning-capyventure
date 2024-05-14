@@ -95,7 +95,7 @@ export class AuthService {
                 console.log(response);
             })
             .catch(function (error) {
-                // handle error
+                throw new AuthenticationError("Token is not valid", 400);
                 console.log(error);
             })
 
