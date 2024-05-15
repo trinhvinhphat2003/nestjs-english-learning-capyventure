@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, now } from 'mongoose';
 
 export type StoryDocument = HydratedDocument<Story>;
 
@@ -13,7 +13,7 @@ export interface Content {
     content: string
 }
 
-@Schema()
+@Schema({timestamps: true})
 export class Story {
     @Prop({ required: true })
     title: string;
@@ -41,6 +41,7 @@ export class Story {
 
     @Prop({ required: true})
     level: string;
+
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

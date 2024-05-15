@@ -71,11 +71,16 @@ export class StoryService {
         logging.info("filter DTO: " + JSON.stringify(filterDTO), "story/getAll()")
         let offset = (page - 1) * size;
         let limit = size;
-        let story: StoryDocument[] = await this.storyModel.find({
-            title: { $regex: new RegExp(filterDTO.title, "i") },
-            level: { $regex: new RegExp(filterDTO.level, "i") },
-            category: { $regex: new RegExp(filterDTO.category, "i") },
-        })
+        const queryFilter: {
+            title?: { $regex: RegExp };
+            level?: { $regex: RegExp };
+            category?: { $regex: RegExp };
+        } = {};
+        if (filterDTO.title) queryFilter.title = { $regex: new RegExp(filterDTO.title, "i") };
+        if (filterDTO.level) queryFilter.level = { $regex: new RegExp(filterDTO.level, "i") };
+        if (filterDTO.category) queryFilter.category = { $regex: new RegExp(filterDTO.category, "i") };
+        
+        let story: StoryDocument[] = await this.storyModel.find(queryFilter)
             .sort({
                 "_id": filterDTO.sort.direction === "asc" ? 1 : -1
             })

@@ -11,12 +11,14 @@ import * as compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import * as multer from 'multer';
 import * as multipart from '@fastify/multipart';
+declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({ bodyLimit: 5 * 1024 * 1024 })
   );
+
 
   //app.register(fastifyMulter.contentParser);
   // upload file -----------------------------------
@@ -30,7 +32,7 @@ async function bootstrap() {
 
   // set up swagger --------------------------------
   const config = new DocumentBuilder()
-    .setTitle('Team 74 - API - Document - NJS1710')
+    .setTitle('Team 92 - API - Document - NJS1710')
     .setDescription('API for user interface development')
     .setVersion('1.0')
     .addBearerAuth()
@@ -65,5 +67,10 @@ async function bootstrap() {
   // -----------------------------------------------
 
   await app.listen(4000);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

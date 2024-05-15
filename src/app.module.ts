@@ -19,8 +19,8 @@ import { VideoModule } from './modules/video/video.module';
     StoryModule,
     VocabularyModule,
     VocabularyTagModule,
-    VideoModule
-    //MyMiddlewareModule
+    VideoModule,
+    // MyMiddlewareModule
   ],
   controllers: [],
   providers: [],

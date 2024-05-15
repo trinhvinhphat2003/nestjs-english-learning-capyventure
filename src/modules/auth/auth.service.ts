@@ -85,14 +85,18 @@ export class AuthService {
 
     }
 
-    async verifyGoogleToken(googleToken: string): Promise<authResponse> {
+    async verifyGoogleToken(googleAccessToken: string): Promise<authResponse> {
         logging.info("Start get one with email", "auth/service/verifyPassword()")
-        let url: string = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + googleToken;
+        let url: string = "https://www.googleapis.com/oauth2/v1/userinfo";
 
-        let googleResponse: any = axios.get(url)
+        let googleResponse: any = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${googleAccessToken}`
+            }
+        })
             .then(function (response) {
                 // handle success
-                console.log(response);
+                return response.data
             })
             .catch(function (error) {
                 throw new AuthenticationError("Token is not valid", 400);

@@ -39,14 +39,27 @@ export class AuthController {
         }
     }
 
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                token: {
+                    type: 'string',
+                    example: 'xyz'
+                },
+            },
+        },
+    })
     @HttpCode(HttpStatus.OK)
-    @Post('login/google/:token')
+    @Post('login/google')
     async loginGoogle(
-        @Param("token") token: string
+        @Body() body: {
+            token: string,
+        }
     ) {
         try {
             logging.info("Start verify google", "auth/controller/loginPassword()")
-            return await this.authService.verifyGoogleToken(token);
+            return await this.authService.verifyGoogleToken(body.token);
         } catch (error) {
             return JSON.stringify(error);
         }

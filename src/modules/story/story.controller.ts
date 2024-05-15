@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Put, Query, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { StoryService } from "./story.service";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
 import { UpdateStoryRequestDTO } from "./dtos/requests/update-story-request.dto";
@@ -67,15 +67,23 @@ export class StoryController {
     //     res.send(image.data);
     // }
 
+
     @Get("/")
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'size', required: false, type: Number, example: 10 })
+    @ApiQuery({ name: 'title', required: false, type: String, })
+    @ApiQuery({ name: 'category', required: false, type: String, })
+    @ApiQuery({ name: 'level', required: false, type: String, })
+    @ApiQuery({ name: 'sortBy', required: false, type: String, example: '_id' })
+    @ApiQuery({ name: 'direction', required: false, enum: ['asc', 'desc'], example: 'asc' })
     async GetAllStory(
         @Query("page") page: number = 1,
         @Query("size") size: number = 10,
         @Query("title") title: string = '',
         @Query("category") category: string = "",
         @Query("level") level: string = "",
-        @Query("sortBy") sortBy : string = "_id",
-        @Query("direction") direction: "asc" | "desc" = "asc" 
+        @Query("sortBy") sortBy: string = "_id",
+        @Query("direction") direction: "asc" | "desc" = "asc"
     ) {
         try {
             let filterDTO: FilterStoryRequestDTO = {
@@ -127,7 +135,7 @@ export class StoryController {
     // ) {
     //     console.log(isImageChange)
     //     try {
-            
+
     //         let body: UpdateStoryRequestDTO = data.data as unknown as UpdateStoryRequestDTO;
     //         let result: any = await this.storyService.updateOneById(id, body, files.image, isImageChange === "yes" ? true : false);
     //         return {
