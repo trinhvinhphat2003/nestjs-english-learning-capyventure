@@ -4,8 +4,8 @@ import { Request } from "express";
 import { VocabularyTagService } from "./vocabulary-tag.service";
 import { CreateVocabularyTagRequestDTO } from "./dtos/requests/CreateVocabularyTagRequestDTO";
 
-@ApiTags('vocabulary-tag')
-@Controller('vocabulary-tag')
+@ApiTags('collection')
+@Controller('collection')
 export class VocabularyTagController {
 
     constructor(

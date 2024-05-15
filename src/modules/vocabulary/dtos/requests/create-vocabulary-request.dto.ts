@@ -3,11 +3,11 @@ import { IsArray, IsNotEmpty, IsString } from "class-validator";
 export class CreateVocabularyRequestDTO {
     @IsString()
     @IsNotEmpty()
-    word: string;
+    sourceText: string;
 
     @IsString()
     @IsNotEmpty()
-    definition: string;
+    translation: string;
 
     @IsString()
     @IsNotEmpty()

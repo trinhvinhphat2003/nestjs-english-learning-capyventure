@@ -6,10 +6,10 @@ export type VocabularyDocument = HydratedDocument<Vocabulary>;
 @Schema()
 export class Vocabulary {
     @Prop({ required: true })
-    word: string;
+    sourceText: string;
 
     @Prop({ required: true })
-    definition: string;
+    translation: string;
 
     @Prop({ required: true })
     tag: string;

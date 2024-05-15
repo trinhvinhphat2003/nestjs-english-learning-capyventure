@@ -65,11 +65,17 @@ export class VideoService {
         logging.info("filter DTO: " + JSON.stringify(filterDTO), "story/getAll()")
         let offset = (page - 1) * size;
         let limit = size;
-        let video: VideoDocument[] = await this.VideoModel.find({
-            caption: { $regex: new RegExp(filterDTO.caption, "i") },
-            level: { $regex: new RegExp(filterDTO.level, "i") },
-            category: { $regex: new RegExp(filterDTO.category, "i") },
-        })
+
+        const queryFilter: {
+            caption?: { $regex: RegExp };
+            level?: { $regex: RegExp };
+            category?: { $regex: RegExp };
+        } = {};
+        if (filterDTO.caption) queryFilter.caption = { $regex: new RegExp(filterDTO.caption, "i") };
+        if (filterDTO.level) queryFilter.level = { $regex: new RegExp(filterDTO.level, "i") };
+        if (filterDTO.category) queryFilter.category = { $regex: new RegExp(filterDTO.category, "i") };
+
+        let video: VideoDocument[] = await this.VideoModel.find(queryFilter)
             .sort({
                 "_id": filterDTO.sort.direction === "asc" ? 1 : -1
             })

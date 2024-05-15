@@ -36,8 +36,8 @@ export class VocabularyService {
         logging.info("accountId: " + accountId, "createNewVocabulary()")
         let newVocabulary: Vocabulary = {
             tag: dto.tag,
-            word: dto.word,
-            definition: dto.definition,
+            sourceText: dto.sourceText,
+            translation: dto.translation,
             accountId: accountId
         }
         let tagDocuments: VocabularyTagDocument[] = await this.vocabularyTagService.getVocabTagFromAccountId(accountId)
