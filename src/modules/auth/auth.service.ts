@@ -64,7 +64,7 @@ export class AuthService {
         const decodedToken: decodedToken = await this.decodeToken(token)
             .then(rs => rs)
             .catch(err => {
-                throw new InternalServerErrorException();
+                throw new AuthenticationError("Token is invalid", 401);
             })
         logging.info("decodedToken: " + JSON.stringify(decodedToken))
         return decodedToken.accountId;
