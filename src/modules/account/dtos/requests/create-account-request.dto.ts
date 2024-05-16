@@ -8,4 +8,8 @@ export class CreateAccountRequestDTO {
 
     @IsNotEmpty()
     role: Role;
+
+    name: string;
+
+    picture: string;
 }

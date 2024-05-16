@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Req } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Req, Query } from "@nestjs/common";
+import { ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { VocabularyService } from "./vocabulary.service";
 import { CreateVocabularyRequestDTO } from "./dtos/requests/create-vocabulary-request.dto";
 import { Request } from "express";
@@ -25,26 +25,29 @@ export class VocabularyController {
         }
     }
 
-    @Get("/:id")
-    async GetVocabById(
-        @Param("id") id: string
-    ) {
-        try {
-            let result: any = await this.vocabularyService.getOneById(id);
-            return {
-                statusCode: 200,
-                data: result
-            }
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
-    }
+    // @Get("/:id")
+    // async GetVocabById(
+    //     @Param("id") id: string
+    // ) {
+    //     try {
+    //         let result: any = await this.vocabularyService.getOneById(id);
+    //         return {
+    //             statusCode: 200,
+    //             data: result
+    //         }
+    //     } catch (error) {
+    //         throw new InternalServerErrorException();
+    //     }
+    // }
 
-    @Get("/tag/:tag/:page/:size")
+    @Get("/:tag")
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'size', required: false, type: Number, example: 10 })
+    @ApiParam({ name: 'tag', required: false, type: String, })
     async GetVocabByTag(
         @Param("tag") tag: string,
-        @Param("page") page: number,
-        @Param("size") size: number,
+        @Query("page") page: number,
+        @Query("size") size: number,
         @Req() request: Request
     ) {
         try {
@@ -58,10 +61,12 @@ export class VocabularyController {
         }
     }
 
-    @Get("/:page/:size")
+    @Get("/")
+    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+    @ApiQuery({ name: 'size', required: false, type: Number, example: 10 })
     async GetAllVocab(
-        @Param("page") page: number,
-        @Param("size") size: number,
+        @Query("page") page: number,
+        @Query("size") size: number,
         @Req() request: Request
     ) {
         try {

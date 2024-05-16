@@ -12,9 +12,14 @@ type decodedToken = {
     email: string
 }
 
-type authResponse = {
+type AuthResponse = {
     token: string,
-    account: any,
+    userInfo: {
+        name: string,
+        picture: string,
+        email: string,
+        role: Role,
+    },
 }
 @Injectable()
 export class AuthService {
@@ -70,7 +75,7 @@ export class AuthService {
         return decodedToken.accountId;
     }
 
-    async verifyPassword(email: string, password: string): Promise<authResponse> {
+    async verifyPassword(email: string, password: string): Promise<AuthResponse> {
         logging.info("Start get one with email", "auth/service/verifyPassword()")
         var account = await this.accountService.getOneWithEmail(email);
         logging.info(JSON.stringify(account), "auth/service/verifyPassword()")
@@ -80,12 +85,12 @@ export class AuthService {
         let token: string = await this.generateToken({ accountId: account._id, email: account.email })
         return {
             token: token,
-            account,
+            userInfo: account,
         };
 
     }
 
-    async verifyGoogleToken(googleAccessToken: string): Promise<authResponse> {
+    async verifyGoogleToken(googleAccessToken: string): Promise<AuthResponse> {
         logging.info("Start get one with email", "auth/service/verifyPassword()")
         let url: string = "https://www.googleapis.com/oauth2/v1/userinfo";
 
@@ -108,7 +113,9 @@ export class AuthService {
             //create account
             account = await this.accountService.createNewAccount({
                 email: googleResponse.email,
-                role: Role.member
+                role: Role.member,
+                name: googleResponse.name,
+                picture:googleResponse.picture
             })
         }
         logging.info(JSON.stringify(account), "auth/service/verifyGoogleToken()")
@@ -118,7 +125,7 @@ export class AuthService {
         let jwt: string = await this.generateToken({ accountId: account._id, email: account.email })
         return {
             token: jwt,
-            account,
+            userInfo: account,
         };
 
     }

@@ -12,6 +12,8 @@ export class AccountService {
         let newAccount: Account = {
             email: dto.email,
             role: dto.role,
+            name: dto.name,
+            picture: dto.picture,
         }
         return new this.accountModel(newAccount).save()
     }
