@@ -127,6 +127,7 @@ export class VocabularyTagService {
         for(const collection of tagDocuments) {
             let vocabs = await this.vocabularyService.getByTag(collection.name, 1, 1000, request)
             response.push({
+                id: collection._id,
                 name: collection.name,
                 description: collection.description,
                 picture: collection.picture,
