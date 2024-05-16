@@ -51,7 +51,7 @@ export class AuthService {
         const decodedToken: decodedToken = await this.jwtService.verifyAsync(token)
             .then(rs => rs)
             .catch(err => {
-                throw new InternalServerErrorException();
+                throw new AuthenticationError("Token is invalid", 401);
             })
         return decodedToken;
     }
