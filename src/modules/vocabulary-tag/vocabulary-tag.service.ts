@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, forwardRef} from "@nestjs/common";
+import { ForbiddenException, HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, forwardRef} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { VocabularyTag, VocabularyTagDocument } from "./vocabulary-tag.schema";
@@ -22,10 +22,19 @@ export class VocabularyTagService {
         .exec()
     }
 
-    async createTagForAccountId(accountId: string, tag: string) {
+    async getVocabTagBytagName(tagName: string): Promise<VocabularyTagDocument> {
+        return this.vocabularyTagModel.findOne({
+            name: tagName
+        })
+        .exec()
+    }
+
+    async createTagForAccountId(accountId: string, tag: string, description: string, picture: string) {
         let newTag: VocabularyTag = {
             accountId: accountId,
-            name: tag
+            name: tag,
+            description,
+            picture
         }
         await new this.vocabularyTagModel(newTag).save()
         .then(rs => {
@@ -64,9 +73,13 @@ export class VocabularyTagService {
                 break;
             }
         }
+        console.log("checkIfTagIsExisted: " + checkIfTagIsExisted)
+        if(checkIfTagIsExisted) {
+            throw new HttpException('Dupplicated tag', HttpStatus.BAD_REQUEST);
+        }
 
         if(!checkIfTagIsExisted) {
-            await this.createTagForAccountId(accountId, dto.name)
+            await this.createTagForAccountId(accountId, dto.name, dto.description, dto.picture)
         }
 
         logging.info("////// END CREATE VOCAB TAG//////")
@@ -104,13 +117,23 @@ export class VocabularyTagService {
         })
     }
 
-    async getAll(request: Request): Promise<VocabularyTagDocument[]> {
+    async getAll(request: Request): Promise<any[]> {
         logging.info("////// START GET ALL VOCAB TAG //////")
         
         let accountId: string = await this.getAccountIdFromrequest(request)
 
         let tagDocuments: VocabularyTagDocument[] = await this.getVocabTagFromAccountId(accountId)
+        let response = []
+        for(const collection of tagDocuments) {
+            let vocabs = await this.vocabularyService.getByTag(collection.name, 1, 1000, request)
+            response.push({
+                name: collection.name,
+                description: collection.description,
+                picture: collection.picture,
+                totalVocab: vocabs.length
+            })
+        }
 
-        return tagDocuments;
+        return response;
     }
 }

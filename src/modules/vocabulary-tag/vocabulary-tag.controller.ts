@@ -21,7 +21,7 @@ export class VocabularyTagController {
                 message: "Tag created successfully"
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error;
         }
     }
 

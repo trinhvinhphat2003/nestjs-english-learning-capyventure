@@ -12,7 +12,7 @@ export class Vocabulary {
     translation: string;
 
     @Prop({ required: true })
-    tag: string;
+    collection: string;
 
     @Prop({required: true})
     accountId: string

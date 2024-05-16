@@ -10,6 +10,12 @@ export class VocabularyTag {
 
     @Prop({required: true})
     accountId: string
+
+    @Prop({required: true})
+    description: string
+
+    @Prop({required: true})
+    picture: string
 }
 
 export const VocabularyTagSchema = SchemaFactory.createForClass(VocabularyTag);

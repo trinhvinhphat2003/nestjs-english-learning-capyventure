@@ -1,4 +1,4 @@
-import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { AccountService } from "../account/account.service";
 import { AuthenticationError } from "./auth.exception";
@@ -63,13 +63,13 @@ export class AuthService {
 
     async getAccountIdFromToken(token: string): Promise<string> {
         if (!token) {
-            throw new AuthenticationError("Token is required", 400);
+            throw new HttpException("Token is required", HttpStatus.UNAUTHORIZED);
         }
 
         const decodedToken: decodedToken = await this.decodeToken(token)
             .then(rs => rs)
             .catch(err => {
-                throw new AuthenticationError("Token is invalid", 401);
+                throw new HttpException("Token is invalid", HttpStatus.FORBIDDEN);
             })
         logging.info("decodedToken: " + JSON.stringify(decodedToken))
         return decodedToken.accountId;

@@ -13,7 +13,7 @@ export class VocabularyController {
     ) { }
 
     @Post()
-    async createNewStory(@Body() dto: CreateVocabularyRequestDTO, @Req() request: Request) {
+    async createNewVocab(@Body() dto: CreateVocabularyRequestDTO, @Req() request: Request) {
         try {
             let result: any = await this.vocabularyService.createNewVocabulary(dto, request)
             return {
@@ -21,7 +21,7 @@ export class VocabularyController {
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 
@@ -41,23 +41,19 @@ export class VocabularyController {
     // }
 
     @Get("/:tag")
-    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-    @ApiQuery({ name: 'size', required: false, type: Number, example: 10 })
     @ApiParam({ name: 'tag', required: false, type: String, })
     async GetVocabByTag(
         @Param("tag") tag: string,
-        @Query("page") page: number,
-        @Query("size") size: number,
         @Req() request: Request
     ) {
         try {
-            let result: any = await this.vocabularyService.getByTag(tag, page, size, request);
+            let result: any = await this.vocabularyService.getByTag(tag, 1, 10000, request);
             return {
                 statusCode: 200,
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 
@@ -76,7 +72,7 @@ export class VocabularyController {
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 

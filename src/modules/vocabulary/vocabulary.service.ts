@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Vocabulary, VocabularyDocument } from "./vocabulary.schema";
@@ -30,12 +30,9 @@ export class VocabularyService {
         
         let accountId: string = await this.getAccountIdFromrequest(request)
         .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException()
-        });
         logging.info("accountId: " + accountId, "createNewVocabulary()")
         let newVocabulary: Vocabulary = {
-            tag: dto.tag,
+            collection: dto.collection,
             sourceText: dto.sourceText,
             translation: dto.translation,
             accountId: accountId
@@ -48,14 +45,14 @@ export class VocabularyService {
 
         let checkIfTagIsExisted: boolean = false;
         for(const tagDocument of tagDocuments) {
-            if(tagDocument.name === dto.tag) {
+            if(tagDocument.name === dto.collection) {
                 checkIfTagIsExisted = true;
                 break;
             }
         }
 
         if(!checkIfTagIsExisted) {
-            await this.vocabularyTagService.createTagForAccountId(accountId, dto.tag)
+            throw new HttpException("tag is not existed", HttpStatus.BAD_REQUEST)
         }
 
         logging.info("////// END CREATE VOCAB //////")
@@ -78,9 +75,6 @@ export class VocabularyService {
     async getByTag(tag: string, page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
         .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException()
-        });
         let offset = (page - 1) * size;
         let limit = size;
         let story: VocabularyDocument[] = await this.vocabularyModel.find({

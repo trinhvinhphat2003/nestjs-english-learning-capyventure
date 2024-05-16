@@ -11,5 +11,5 @@ export class CreateVocabularyRequestDTO {
 
     @IsString()
     @IsNotEmpty()
-    tag: string;
+    collection: string;
 }
