@@ -75,7 +75,7 @@ export class VocabularyService {
         return vocab;
     }
 
-    async getByTag(tag: string, page: number, size: number, request: Request): Promise<VocabularyDocument[]> {
+    async getByTag(tag: string, page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
         .then(rs => rs)
         .catch(err => {
@@ -121,7 +121,7 @@ export class VocabularyService {
         return story;
     }
 
-    async getAll(page: number, size: number, request: Request): Promise<VocabularyDocument[]> {
+    async getAll(page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
         .then(rs => rs)
         .catch(err => {
