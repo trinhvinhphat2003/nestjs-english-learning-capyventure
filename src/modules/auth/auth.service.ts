@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException, forwardRef } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { AccountService } from "../account/account.service";
 import { AuthenticationError } from "./auth.exception";
@@ -26,7 +26,7 @@ export class AuthService {
 
     constructor(
         private readonly jwtService: JwtService,
-        @Inject('ACCOUNT_SERVICE_PHATTV') private readonly accountService: AccountService,
+        @Inject(forwardRef(() => 'ACCOUNT_SERVICE_PHATTV')) private readonly accountService: AccountService,
     ) { }
 
     private async generateToken(payload: any): Promise<string> {
@@ -64,6 +64,10 @@ export class AuthService {
     async getAccountIdFromToken(token: string): Promise<string> {
         if (!token) {
             throw new HttpException("Token is required", HttpStatus.UNAUTHORIZED);
+        }
+        const prefix = "Bearer ";
+        if (token.startsWith(prefix)) {
+            return token.slice(prefix.length);
         }
 
         const decodedToken: decodedToken = await this.decodeToken(token)
@@ -109,13 +113,13 @@ export class AuthService {
             })
 
         var account = await this.accountService.getOneWithEmail(googleResponse.email);
-        if(!account) {
+        if (!account) {
             //create account
             account = await this.accountService.createNewAccount({
                 email: googleResponse.email,
                 role: Role.member,
                 name: googleResponse.name,
-                picture:googleResponse.picture
+                picture: googleResponse.picture
             })
         }
         logging.info(JSON.stringify(account), "auth/service/verifyGoogleToken()")

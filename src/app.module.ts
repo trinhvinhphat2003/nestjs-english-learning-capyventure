@@ -9,6 +9,8 @@ import { VocabularyModule } from './modules/vocabulary/vocabulary.module';
 import { VocabularyTagModule } from './modules/vocabulary-tag/vocabulary-tag.module';
 import { MyMiddlewareModule } from './middlewares/middleware.module';
 import { VideoModule } from './modules/video/video.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { VideoModule } from './modules/video/video.module';
     VocabularyModule,
     VocabularyTagModule,
     VideoModule,
+    PaymentModule,
+    MailModule
     // MyMiddlewareModule
   ],
   controllers: [],

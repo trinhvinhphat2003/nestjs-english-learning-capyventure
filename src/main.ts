@@ -11,12 +11,20 @@ import * as compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import * as multer from 'multer';
 import * as multipart from '@fastify/multipart';
+import * as fs from "fs"
 declare const module: any;
 
 async function bootstrap() {
+  const httpsOptions = {
+    key: fs.readFileSync('./src/secrets/cert.key'),
+    cert: fs.readFileSync('./src/secrets/cert.crt'),
+  };
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ bodyLimit: 5 * 1024 * 1024 })
+    new FastifyAdapter({ bodyLimit: 5 * 1024 * 1024, 
+      // https: httpsOptions 
+    })
   );
 
 

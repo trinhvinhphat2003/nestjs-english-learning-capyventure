@@ -78,7 +78,7 @@ export class VocabularyService {
         let offset = (page - 1) * size;
         let limit = size;
         let story: VocabularyDocument[] = await this.vocabularyModel.find({
-            tag: tag,
+            collection: tag,
             accountId: accountId
         })
             .skip(offset)

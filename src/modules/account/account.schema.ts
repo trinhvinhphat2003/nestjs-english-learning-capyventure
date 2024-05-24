@@ -9,6 +9,12 @@ export enum Role {
     premium_member = 'premium_member',
 }
 
+export type Subscription = {
+    type: string,
+    startDate: number,
+    endDate: number
+}
+
 @Schema()
 export class Account {
     @Prop({ required: true })
@@ -22,6 +28,16 @@ export class Account {
 
     @Prop({ type: String, enum: Role, default: Role.member })
     role: Role;
+
+    @Prop({ required: false, defaultValue: false })
+    isPremium: boolean
+
+    @Prop({type: Object, required: false, defaultValue: {
+        type: "none",
+        startDate: 0,
+        endDate: 0
+    } as Subscription })
+    currScription: Subscription
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

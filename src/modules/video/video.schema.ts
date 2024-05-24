@@ -37,6 +37,9 @@ export class Video {
 
     @Prop({ required: true})
     transcripts: string
+
+    @Prop({ required: true})
+    isPremium: boolean
 }
 
 export const VideoSchema = SchemaFactory.createForClass(Video);

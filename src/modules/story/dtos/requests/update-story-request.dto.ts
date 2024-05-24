@@ -32,4 +32,6 @@ export class UpdateStoryRequestDTO {
     @IsString()
     @IsNotEmpty()
     level: string;
+
+    isPremium: boolean
 }

@@ -11,7 +11,6 @@ export class AccountController {
     constructor(
         @Inject('ACCOUNT_SERVICE_PHATTV') private readonly accountService: AccountService,
     ) { }
-
     @Post()
     async createNewAccount(@Body() dto: CreateAccountRequestDTO) {
         try {

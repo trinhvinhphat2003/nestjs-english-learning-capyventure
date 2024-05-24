@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Req } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { VocabularyTagService } from "./vocabulary-tag.service";
 import { CreateVocabularyTagRequestDTO } from "./dtos/requests/CreateVocabularyTagRequestDTO";
@@ -13,6 +13,7 @@ export class VocabularyTagController {
     ) { }
 
     @Post()
+    @ApiBearerAuth()
     async createNewVocabularyTag(@Body() dto: CreateVocabularyTagRequestDTO, @Req() request: Request) {
         try {
             await this.vocabularyTagService.createNewVocabularyTag(dto, request)
@@ -43,6 +44,7 @@ export class VocabularyTagController {
     // }
 
     @Get()
+    @ApiBearerAuth()
     async GetAllVocabTag(@Req() request: Request) {
         try {
             let result: any = await this.vocabularyTagService.getAll(request);
@@ -51,18 +53,19 @@ export class VocabularyTagController {
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 
     @Delete("/:id")
+    @ApiBearerAuth()
     async deleteVocabTagById(
         @Param("id") id: string,
         @Req() request: Request
     ) {
         await this.vocabularyTagService.deleteOneById(id, request)
         .catch(err => {
-            throw new InternalServerErrorException()
+            throw err
         })
         return {
             statusCode: 200,

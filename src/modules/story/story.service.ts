@@ -47,7 +47,8 @@ export class StoryService {
             comment: [],
             contents: dto.contents,
             display_image: dto.display_image,
-            level: dto.level
+            level: dto.level,
+            isPremium: dto.isPremium
         }
         logging.info("new story: " + JSON.stringify(newStory), "createNewStory()")
         return new this.storyModel(newStory).save()
@@ -122,7 +123,8 @@ export class StoryService {
             comment: dto.comment,
             contents: dto.contents,
             display_image: display_image,
-            level: dto.level
+            level: dto.level,
+            isPremium: dto.isPremium
         }
         return await this.storyModel.findByIdAndUpdate(id, updateInfo)
             .then(rs => rs)

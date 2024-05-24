@@ -42,6 +42,9 @@ export class Story {
     @Prop({ required: true})
     level: string;
 
+    @Prop({ required: true})
+    isPremium: boolean
+
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);

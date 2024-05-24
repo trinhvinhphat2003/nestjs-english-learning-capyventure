@@ -28,4 +28,6 @@ export class CreateStoryRequestDTO {
     @IsString()
     @IsNotEmpty()
     display_image: string;
+
+    isPremium: boolean
 }

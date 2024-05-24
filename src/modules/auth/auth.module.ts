@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import * as dotenv from 'dotenv';
 import { AuthService } from "./auth.service";
@@ -12,7 +12,7 @@ dotenv.config();
             secret: process.env.JWT_SECRET_KEY,
             signOptions: { expiresIn: '24h', algorithm: 'HS256' },
         }),
-        AccountModule,
+        forwardRef(() => AccountModule),
     ],
     controllers: [
         AuthController,

@@ -52,7 +52,7 @@ export class VideoController {
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 
@@ -67,7 +67,7 @@ export class VideoController {
                 data: result
             }
         } catch (error) {
-            throw new InternalServerErrorException();
+            throw error
         }
     }
 

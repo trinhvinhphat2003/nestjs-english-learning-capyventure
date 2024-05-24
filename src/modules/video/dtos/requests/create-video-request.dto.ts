@@ -40,4 +40,6 @@ export class CreateVideoRequestDTO {
 
     @IsArray()
     transcripts: Transcript[];
+
+    isPremium: boolean
 }

@@ -40,7 +40,8 @@ export class VideoService {
             fullText: dto.fullText,
             level: dto.level,
             thumbnail: dto.thumbnail,
-            transcripts: JSON.stringify(dto.transcripts)
+            transcripts: JSON.stringify(dto.transcripts),
+            isPremium: dto.isPremium
         }
 
         logging.info("////// END CREATE VIDEO //////")

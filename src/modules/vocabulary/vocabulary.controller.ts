@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Req, Query } from "@nestjs/common";
-import { ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { VocabularyService } from "./vocabulary.service";
 import { CreateVocabularyRequestDTO } from "./dtos/requests/create-vocabulary-request.dto";
 import { Request } from "express";
@@ -12,6 +12,7 @@ export class VocabularyController {
         @Inject('VOCABULARY_SERVICE_PHATTV') private readonly vocabularyService: VocabularyService,
     ) { }
 
+    @ApiBearerAuth()
     @Post()
     async createNewVocab(@Body() dto: CreateVocabularyRequestDTO, @Req() request: Request) {
         try {
@@ -40,6 +41,7 @@ export class VocabularyController {
     //     }
     // }
 
+    @ApiBearerAuth()
     @Get("/:tag")
     @ApiParam({ name: 'tag', required: false, type: String, })
     async GetVocabByTag(
@@ -60,6 +62,7 @@ export class VocabularyController {
     @Get("/")
     @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
     @ApiQuery({ name: 'size', required: false, type: Number, example: 10 })
+    @ApiBearerAuth()
     async GetAllVocab(
         @Query("page") page: number,
         @Query("size") size: number,
@@ -77,6 +80,7 @@ export class VocabularyController {
     }
 
     @Delete("/:id")
+    @ApiBearerAuth()
     async deleteVocabById(
         @Param("id") id: string,
         @Req() request: Request
