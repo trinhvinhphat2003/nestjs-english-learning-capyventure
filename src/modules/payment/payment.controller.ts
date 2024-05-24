@@ -118,7 +118,7 @@ export class PaymentController {
     @Get("/vnpay_return/:packageType/:accId")
     async response(@Query() vnp_Params: any, @Res() res: Response, @Param('packageType') subcriptionType: string, @Param('accId') accId: string) {
         const account: AccountDocument = await this.accountService.registerSubcription(accId, subcriptionType)
-        this.mailService.sendMail(`Hi ${account.name}! You successfully register ${subcriptionType} package`, "trinhvinhphat123@gmail.com", "[Capyventure] Scription successfully")
+        this.mailService.sendMail(`Hi ${account.name}! You successfully register ${subcriptionType} package`, account.email, "[Capyventure] Scription successfully")
         console.log(JSON.stringify(vnp_Params, undefined, 4))
         res.redirect(302, "http://localhost:4000/story?page=1&size=10");
     }
