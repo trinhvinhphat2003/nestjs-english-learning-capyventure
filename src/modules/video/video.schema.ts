@@ -12,7 +12,7 @@ export interface Transcript {
 @Schema()
 export class Video {
     @Prop({ required: true })
-    videoLink: string;
+    videoId: string;
 
     @Prop({ required: true, default: 0 })
     category: String;
@@ -33,10 +33,7 @@ export class Video {
     level: string;
 
     @Prop({ required: true})
-    fullText: string;
-
-    @Prop({ required: true})
-    transcripts: string
+    transcripts: Transcript[]
 
     @Prop({ required: true})
     isPremium: boolean

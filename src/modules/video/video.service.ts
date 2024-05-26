@@ -32,15 +32,14 @@ export class VideoService {
         });
         logging.info("accountId: " + accountId, "createNewVideo()")
         let newVideo: Video = {
-            videoLink: dto.videoLink,
+            videoId: dto.videoId,
             caption: dto.caption,
             category: dto.category,
             channel: dto.channel,
             duration: dto.duration,
-            fullText: dto.fullText,
             level: dto.level,
             thumbnail: dto.thumbnail,
-            transcripts: JSON.stringify(dto.transcripts),
+            transcripts: dto.transcripts,
             isPremium: dto.isPremium
         }
 

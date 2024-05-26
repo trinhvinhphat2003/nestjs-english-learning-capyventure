@@ -9,7 +9,7 @@ export interface Transcript {
 export class CreateVideoRequestDTO {
     @IsString()
     @IsNotEmpty()
-    videoLink: string;
+    videoId: string;
 
     @IsString()
     @IsNotEmpty()
@@ -30,10 +30,6 @@ export class CreateVideoRequestDTO {
     @IsString()
     @IsNotEmpty()
     caption: string;
-
-    @IsString()
-    @IsNotEmpty()
-    fullText: string;
 
     @IsNumber()
     duration: number;
