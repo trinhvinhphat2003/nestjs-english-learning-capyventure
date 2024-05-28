@@ -13,9 +13,9 @@ import { VocabularyTagDocument } from "../vocabulary-tag/vocabulary-tag.schema";
 @Injectable()
 export class VocabularyService {
     constructor(@InjectModel(Vocabulary.name) private vocabularyModel: Model<Vocabulary>,
-    @Inject('ACCOUNT_SERVICE_PHATTV') private readonly accountService: AccountService,
-    @Inject('VOCABULARY_TAG_SERVICE_PHATTV') private readonly vocabularyTagService: VocabularyTagService,
-    @Inject('AUTH_SERVICE_TIENNT') private readonly authService: AuthService) { }
+        @Inject('ACCOUNT_SERVICE_PHATTV') private readonly accountService: AccountService,
+        @Inject('VOCABULARY_TAG_SERVICE_PHATTV') private readonly vocabularyTagService: VocabularyTagService,
+        @Inject('AUTH_SERVICE_TIENNT') private readonly authService: AuthService) { }
 
     private async getAccountIdFromrequest(request: Request) {
         logging.info("get token from request", "createNewVocabulary()")
@@ -27,9 +27,9 @@ export class VocabularyService {
 
     async createNewVocabulary(dto: CreateVocabularyRequestDTO, request: Request): Promise<VocabularyDocument> {
         logging.info("////// START CREATE VOCAB //////")
-        
+
         let accountId: string = await this.getAccountIdFromrequest(request)
-        .then(rs => rs)
+            .then(rs => rs)
         logging.info("accountId: " + accountId, "createNewVocabulary()")
         let newVocabulary: Vocabulary = {
             collection: dto.collection,
@@ -38,20 +38,20 @@ export class VocabularyService {
             accountId: accountId
         }
         let tagDocuments: VocabularyTagDocument[] = await this.vocabularyTagService.getVocabTagFromAccountId(accountId)
-        .then(tags => tags)
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+            .then(tags => tags)
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
 
         let checkIfTagIsExisted: boolean = false;
-        for(const tagDocument of tagDocuments) {
-            if(tagDocument.name === dto.collection) {
+        for (const tagDocument of tagDocuments) {
+            if (tagDocument.name === dto.collection) {
                 checkIfTagIsExisted = true;
                 break;
             }
         }
 
-        if(!checkIfTagIsExisted) {
+        if (!checkIfTagIsExisted) {
             throw new HttpException("tag is not existed", HttpStatus.BAD_REQUEST)
         }
 
@@ -72,13 +72,13 @@ export class VocabularyService {
         return vocab;
     }
 
-    async getByTag(tag: string, page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
+    async getByTag(collection: string, page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
-        .then(rs => rs)
+            .then(rs => rs)
         let offset = (page - 1) * size;
         let limit = size;
         let story: VocabularyDocument[] = await this.vocabularyModel.find({
-            collection: tag,
+            collection: collection,
             accountId: accountId
         })
             .skip(offset)
@@ -94,14 +94,14 @@ export class VocabularyService {
         return story;
     }
 
-    async getByTagNotPaging(tag: string, request: Request): Promise<VocabularyDocument[]> {
+    async getByTagNotPaging(collection: string, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
-        .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException()
-        });
-        let story: VocabularyDocument[] = await this.vocabularyModel.find({
-            tag: tag,
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException()
+            });
+        let vocabs: VocabularyDocument[] = await this.vocabularyModel.find({
+            collection: collection,
             accountId: accountId
         })
             .exec()
@@ -109,18 +109,18 @@ export class VocabularyService {
             .catch(error => {
                 throw new InternalServerErrorException();
             });
-        if (!story) {
+        if (!vocabs) {
             throw new NotFoundException("No vocabulary macth with this id");
         }
-        return story;
+        return vocabs;
     }
 
     async getAll(page: number = 1, size: number = 100, request: Request): Promise<VocabularyDocument[]> {
         let accountId: string = await this.getAccountIdFromrequest(request)
-        .then(rs => rs)
-        .catch(err => {
-            throw new InternalServerErrorException()
-        });
+            .then(rs => rs)
+            .catch(err => {
+                throw new InternalServerErrorException()
+            });
         let offset = (page - 1) * size;
         let limit = size;
         let story: VocabularyDocument[] = await this.vocabularyModel.find({
@@ -138,7 +138,7 @@ export class VocabularyService {
 
     async deleteOneById(id: string, request: Request): Promise<void> {
         logging.info("////// START DELETE VOCAB //////")
-        
+
         let accountId: string = await this.getAccountIdFromrequest(request)
 
         let vocab: VocabularyDocument = await this.vocabularyModel.findById(id)
@@ -151,23 +151,35 @@ export class VocabularyService {
             throw new NotFoundException("No vocabulary macth with this id");
         }
 
-        if(vocab.accountId !== accountId) {
+        if (vocab.accountId !== accountId) {
             throw new ForbiddenException();
         }
 
         await this.vocabularyModel.deleteOne({ _id: id })
-        .catch(err => {
-            throw new InternalServerErrorException();
-        })
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
     }
 
-    async deleteAllVocabWithTag(tag: string, accountId: string) {
+    async deleteAllVocabWithTag(collection: string, accountId: string) {
         await this.vocabularyModel.deleteMany({
-            tag: tag,
+            collection: collection,
             accountId: accountId
         })
-        .catch(err => {
-            throw new InternalServerErrorException();
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
+    }
+
+    async updateAllVocabWithTag(collectionName: string, newCollectionName: string, accountId: string) {
+        await this.vocabularyModel.updateMany({
+            collection: collectionName,
+            accountId: accountId
+        }, {
+            collection: newCollectionName,
         })
+            .catch(err => {
+                throw new InternalServerErrorException();
+            })
     }
 }
