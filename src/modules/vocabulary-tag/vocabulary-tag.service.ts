@@ -98,7 +98,7 @@ export class VocabularyTagService {
 
         let checkIfTagIsExisted: boolean = false;
         for (const tagDocument of tagDocuments) {
-            if (tagDocument.name === dto.name) {
+            if (tagDocument.name === dto.name && tagDocument.id !== id) {
                 checkIfTagIsExisted = true;
                 break;
             }
