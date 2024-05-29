@@ -21,17 +21,13 @@ export class UpdateStoryRequestDTO {
     @IsNotEmpty()
     category: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    views: number;
-
-    comment: Comment[];
-
-    display_image: string;
-
     @IsString()
     @IsNotEmpty()
     level: string;
+
+    @IsString()
+    @IsNotEmpty()
+    display_image: string;
 
     isPremium: boolean
 }

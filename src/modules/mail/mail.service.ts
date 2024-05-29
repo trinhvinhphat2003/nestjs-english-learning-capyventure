@@ -5,14 +5,14 @@ import { Injectable } from '@nestjs/common';
 export class MailService {
     constructor(private mailerService: MailerService) { }
 
-    async sendMail(token: string, email: string, subject: string) {
+    async sendMail(message: string, email: string, subject: string) {
         await this.mailerService.sendMail({
             to: email,
             // from: '"Support Team" <support@example.com>', // override default from
             subject: subject,
             template: './token', // either change to ./transactional or rename transactional.html to confirmation.html
             context: {
-                token: token
+                message: message
             },
         });
     }

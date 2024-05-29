@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, InternalServerErrorException, Param, Post, Put, Query, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, InternalServerErrorException, Param, Post, Put, Query, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { StoryService } from "./story.service";
 import { CreateStoryRequestDTO } from "./dtos/requests/create-story-request.dto";
@@ -120,32 +120,21 @@ export class StoryController {
         }
     }
 
-    // @Put("/:id")
-    // @UseInterceptors(
-    //     FileFieldsInterceptor([
-    //         { name: 'image', maxCount: 1 }
-    //     ])
-    // )
-    // async updateStoryById(
-    //     @Param("id") id: string,
-    //     @Query("isImageChange") isImageChange: string,
-    //     @Body() data: Record<string, unknown>,  
-    //     @UploadedFiles()
-    //     files: { image?: MemoryStorageFile }
-    // ) {
-    //     console.log(isImageChange)
-    //     try {
-
-    //         let body: UpdateStoryRequestDTO = data.data as unknown as UpdateStoryRequestDTO;
-    //         let result: any = await this.storyService.updateOneById(id, body, files.image, isImageChange === "yes" ? true : false);
-    //         return {
-    //             statusCode: 200,
-    //             data: result
-    //         }
-    //     } catch (error) {
-    //         throw new InternalServerErrorException();
-    //     }
-    // }
+    @Put("/:id")
+    async updateStoryById(
+        @Param("id") id: string,
+        @Body() data: UpdateStoryRequestDTO,  
+    ) {
+        try {
+            let result: any = await this.storyService.updateOneById(id, data);
+            return {
+                statusCode: 200,
+                data: result
+            }
+        } catch (error) {
+            throw error
+        }
+    }
 
     @Delete("/:id")
     async deleteStoryById(

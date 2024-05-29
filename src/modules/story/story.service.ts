@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Story, StoryDocument } from "./story.schema";
@@ -96,40 +96,23 @@ export class StoryService {
         return story;
     }
 
-    async updateOneById(id: string, dto: UpdateStoryRequestDTO, image: MemoryStorageFile, isImageChange: boolean): Promise<StoryDocument> {
-        let display_image: string = "";
-        //console.log()
-        if (isImageChange == true) {
-            let split: string[] = dto.display_image.split("/")
-            let oldImageId: string = split[split.length - 1];
-            console.log(oldImageId)
-            await this.deleteImageById(oldImageId)
-            display_image = await this.insertImage(image)
-                .then(rs => rs)
-                .catch(err => {
-                    throw new InternalServerErrorException();
-                })
-            console.log("hello");
-        } else {
-            display_image = dto.display_image
-            console.log("hi");
-        }
+    async updateOneById(id: string, dto: UpdateStoryRequestDTO): Promise<StoryDocument> {
         let updateInfo: Story = {
             category: dto.category,
             title: dto.title,
             author: dto.author,
             description: dto.description,
-            views: dto.views,
-            comment: dto.comment,
+            views: 0,
+            comment: [],
             contents: dto.contents,
-            display_image: display_image,
+            display_image: dto.display_image,
             level: dto.level,
             isPremium: dto.isPremium
         }
         return await this.storyModel.findByIdAndUpdate(id, updateInfo)
             .then(rs => rs)
             .catch(err => {
-                throw new InternalServerErrorException();
+                throw new HttpException("internal", HttpStatus.INTERNAL_SERVER_ERROR);
             })
     }
 
