@@ -124,7 +124,7 @@ export class PaymentController {
         const account: AccountDocument = await this.accountService.registerSubcription(accId, subcriptionType)
         this.mailService.sendMail(`Hi ${account.name}! You successfully register ${subcriptionType} package`, account.email, "[Capyventure] Scription successfully")
         console.log(JSON.stringify(vnp_Params, undefined, 4))
-        res.redirect(302, "http://localhost:3000");
+        res.redirect(302, "http://localhost:3000/home?payment_success=true");
     }
 
 }
