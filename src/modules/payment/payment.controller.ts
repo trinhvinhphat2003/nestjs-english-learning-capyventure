@@ -27,7 +27,7 @@ export class PaymentController {
     async createNewPayment(
         @Ip() ip,
         @Req() req: Request,
-        @Res() res: Response,
+        // @Res() res: Response,
         @Param("package") packageTy: string
     )
     {
@@ -107,7 +107,11 @@ export class PaymentController {
             vnp_Params['vnp_SecureHash'] = signed;
             vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
             console.log(vnpUrl)
-            res.redirect(302, vnpUrl);
+            // res.redirect(302, vnpUrl);
+            return {
+                statusCode: 200,
+                data: vnpUrl
+            }
             // const response = await axios.get('https://api.example.com/data');
             // console.log(JSON.stringify(response, undefined, 4))
         } catch (error) {
@@ -120,7 +124,7 @@ export class PaymentController {
         const account: AccountDocument = await this.accountService.registerSubcription(accId, subcriptionType)
         this.mailService.sendMail(`Hi ${account.name}! You successfully register ${subcriptionType} package`, account.email, "[Capyventure] Scription successfully")
         console.log(JSON.stringify(vnp_Params, undefined, 4))
-        res.redirect(302, "http://localhost:4000/story?page=1&size=10");
+        res.redirect(302, "http://localhost:3000");
     }
 
 }
