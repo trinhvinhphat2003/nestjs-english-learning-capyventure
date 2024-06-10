@@ -18,6 +18,7 @@ async function bootstrap() {
   const httpsOptions = {
     key: fs.readFileSync('./src/secrets/cert.key'),
     cert: fs.readFileSync('./src/secrets/cert.crt'),
+    rejectUnauthorized: false
   };
 
   const app = await NestFactory.create<NestFastifyApplication>(
