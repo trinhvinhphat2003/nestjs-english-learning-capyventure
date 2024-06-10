@@ -16,8 +16,8 @@ declare const module: any;
 
 async function bootstrap() {
   const httpsOptions = {
-    key: fs.readFileSync('./src/secrets/cert.key'),
-    cert: fs.readFileSync('./src/secrets/cert.crt'),
+    key: fs.readFileSync('./src/secrets2/key.pem'),
+    cert: fs.readFileSync('./src/secrets2/cert.pem'),
     rejectUnauthorized: false
   };
 
