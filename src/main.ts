@@ -24,7 +24,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({ bodyLimit: 5 * 1024 * 1024, 
-      https: httpsOptions 
+      // https: httpsOptions 
     })
   );
 
@@ -75,7 +75,7 @@ async function bootstrap() {
   // );
   // -----------------------------------------------
 
-  await app.listen(443, "0.0.0.0");
+  await app.listen(80, "0.0.0.0");
 
   if (module.hot) {
     module.hot.accept();
