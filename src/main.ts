@@ -58,7 +58,7 @@ async function bootstrap() {
 
   // set up cors --------------------------------
   app.register(require('@fastify/cors'), {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://capyventure.eastasia.cloudapp.azure.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: false,
