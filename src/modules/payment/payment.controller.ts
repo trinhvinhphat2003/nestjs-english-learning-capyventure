@@ -66,7 +66,7 @@ export class PaymentController {
             let tmnCode = "0HMW9F90"
             let secretKey = "4IKW54V2L7D1RN4L8PDKTP2Y2UP3O9BI"
             let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-            let returnUrl = `http://localhost:4000/payment/vnpay_return/${packageTy}/${accId}`
+            let returnUrl = `https://capyventure.eastasia.cloudapp.azure.com/payment/vnpay_return/${packageTy}/${accId}`
             let orderId = moment(date).format('DDHHmmss');
             let amount = 10000;
             if(packageTy === "yearly") {
@@ -124,7 +124,7 @@ export class PaymentController {
         const account: AccountDocument = await this.accountService.registerSubcription(accId, subcriptionType)
         this.mailService.sendMail(`Hi ${account.name}! You successfully register ${subcriptionType} package`, account.email, "[Capyventure] Scription successfully")
         console.log(JSON.stringify(vnp_Params, undefined, 4))
-        res.redirect(302, "http://localhost:3000/home?payment_success=true");
+        res.redirect(302, "https://capy-venture.vercel.app/home?payment_success=true");
     }
 
 }
